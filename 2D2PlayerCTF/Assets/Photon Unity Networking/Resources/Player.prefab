@@ -145,17 +145,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 2
-  crawlSpeed: 1
   walkSpeed: 2
   runSpeed: 5
   dashing: 0
   dashTimer: .5
+  slidingSpeed: 8
+  sliding: 0
+  slideTimer: 2
+  crawlSpeed: 1
+  crouching: 0
+  sneaking: 0
+  doubleJump: 1
   groundCheck: {fileID: 400002}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 4294967039
   jumpForce: 500
-  crouching: 0
+  pastComments: []
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1

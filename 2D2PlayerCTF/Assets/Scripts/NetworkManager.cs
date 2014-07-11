@@ -25,15 +25,6 @@ public class NetworkManager : Photon.MonoBehaviour {
 		
 	}
 
-	//[RPC] void displayText(String str){
-		
-	//	GUI.Label(Rect(0,0,Screen.width,Screen.height),"Something");
-		
-	//	if(photonView.isMine){
-	//		photonView.RPC ("displayText",PhotonTargets.OthersBuffered,str);
-	//	}
-	//}
-
   	void OnGUI(){
 
 		float textFieldWidth = 200f;

@@ -4,30 +4,51 @@ using System.Collections;
 public class Player : Photon.MonoBehaviour {
 
 	float move;
-	public float maxSpeed = 2f;
-	public float crawlSpeed = 1f;
-	public float walkSpeed = 2f;
-	public float runSpeed = 6f;
 	private bool facingRight = true;
+	Animator anim;
+	
+	public float maxSpeed = 2f;
+	public float walkSpeed = 2f;
+
+	//Dashing
+	//----------------------------------------------------------------------
+	public float runSpeed = 6f;
 	public bool dashing = false;
 	public float dashTimer = 0.5f;
 	private float dashCounter = 0f;
 
+	//Sliding
+	//----------------------------------------------------------------------
+	public float slidingSpeed = 10f;
+	public bool sliding = false;
+	public float slideTimer = 2f;
+	private float slideCounter = 0f;
+
+	//Crawling
+	//----------------------------------------------------------------------
+	public float crawlSpeed = 1f;
+	public bool crouching = false;
+
+	//Sneaking
+	//----------------------------------------------------------------------
+	public bool sneaking = false;
+
+	//Jumping
+	//----------------------------------------------------------------------
+	bool grounded = false;
+	public bool doubleJump = true;
+	public Transform groundCheck;
+	private float goundRadius = 0.1f;
+	public LayerMask whatIsGround;
+	public float jumpForce = 700f;
+
+	//Syncing
+	//----------------------------------------------------------------------
 	private float otherMove;
 	private float otherVSpeed;
 	private bool otherGrounded; //Condense into 0101010101
 	private bool otherCrouch;
 	private bool otherDash;
-
-	Animator anim;
-
-	bool grounded = false;
-	public Transform groundCheck;
-	float goundRadius = 0.1f;
-	public LayerMask whatIsGround;
-	public float jumpForce = 700f;
-
-	public bool crouching = false;
 
     private float lastSynchronizationTime = 0f;
 	private float syncDelay = 0f;
@@ -35,26 +56,28 @@ public class Player : Photon.MonoBehaviour {
 	private Vector3 syncStartPosition = Vector3.zero;
 	private Vector3 syncEndPosition = Vector3.zero;
 
+	//Text
+	//----------------------------------------------------------------------
+	private bool cheatText = false;
+
 	private string textToDisplay = "";
 	private bool displayTheText = false;
 
 	private float displayTextTimer = 10f;
 	private float displayTextCount = 0f;
-
-	private bool cheatText = false;
-	
-	string cheatCode;
+	private string cheatCode;
 	private string cheatField = "";
 	public string[] pastComments;
 
+	//----------------------------------------------------------------------
+
 	void Start(){
 		anim = GetComponent<Animator>();
-
 	}
 
 	void OnGUI(){
-		//GUI.Label(new Rect(10,Screen.height - 60,400,20),"Something");
-		if(cheatText){
+		anim.SetBool("Text",cheatText);
+		if(cheatText && photonView.isMine){
 			GUI.SetNextControlName("MyTextField");
 			cheatField = GUI.TextField(new Rect(10,Screen.height - 30,400,20), cheatField, 25);
 			if(cheatField != "" && Event.current.keyCode == KeyCode.Return)
@@ -62,26 +85,25 @@ public class Player : Photon.MonoBehaviour {
 				cheatCode = cheatField;
 				cheatField = "";
 				displayTheText = true;
-				photonView.RPC("displayText",PhotonTargets.OthersBuffered,cheatCode);
+				displayText(cheatCode);
 				cheatText = false;
 				displayTextCount = 0f;
 			}
 			GUI.FocusControl("MyTextField");
 		}
-
 		if(displayTheText){
-			print(cheatCode);
-			GUI.Label(new Rect(10,Screen.height - 60,400,30),cheatCode);
+			GUI.Label(new Rect(10,Screen.height - 60,400,30),textToDisplay);
 		}
 		if( displayTextTimer >= displayTextCount)
 			displayTextCount += 1 * Time.deltaTime;
-		else
+		else {
 			displayTheText= false;
+			textToDisplay = "";
+		}
 
 	} 
 
 
-	// Update is called once per frame
 	void FixedUpdate () {
         if(photonView.isMine){
        		InputMovement();
@@ -91,17 +113,30 @@ public class Player : Photon.MonoBehaviour {
 		}
 	}
 
+	//Update
+	//-----------------------------------------------------------------------------------------------------------------------------------------
 	void Update(){
 
+		checkForText();
+		checkForDashing();
+		checkForJump();
+		checkForCrouch();
+		checkForSneak();
+
+	}
+
+	void checkForText(){
 		if(Input.GetKeyUp(KeyCode.T)){
 			cheatText = true;
 		}
+	}
 
+	void checkForDashing(){
 		if(dashing && (Input.GetKeyUp(KeyCode.D)||Input.GetKeyUp(KeyCode.A)) && dashTimer < 0 ){
 			dashing = false;
 		}
-
-		if(Input.GetKeyDown(KeyCode.D)||Input.GetKeyDown(KeyCode.A) && grounded && !crouching){
+		
+		if(Input.GetKeyDown(KeyCode.D)||Input.GetKeyDown(KeyCode.A) && grounded && !crouching && !sliding){
 			if ( dashTimer > 0 && dashCounter == 1/*Number of Taps you want Minus One*/){
 				dashing = true;
 			}else{
@@ -116,29 +151,122 @@ public class Player : Photon.MonoBehaviour {
 		}else{
 			dashCounter = 0 ;
 		}
-	
-		
-		if(grounded && Input.GetAxis("Jump") > 0.01){ 
+	}
+
+	void checkForJump(){
+		if((grounded||!doubleJump) && Input.GetKeyDown(KeyCode.W) && !sliding){ 
 			Vector3 v = rigidbody2D.velocity;
-			if(dashing)
-				v.y = 15f;
-			else
-				v.y = 10f;
+				v.y = 12.5f;
 			rigidbody2D.velocity = v;
-			anim.SetBool("Ground",false);
-			
+			grounded = false;
+			if(!doubleJump && !grounded)
+				doubleJump = true;
 		} 
-		
-		if(grounded && Input.GetAxis("Jump") < 0){
-			crouching = true;
-			dashing = false;
-		} else {
+	}
+
+	void checkForCrouch(){
+		if(grounded){
+			if(grounded && Input.GetKey(KeyCode.S)){
+				if(dashing && grounded){
+					dashing = false;
+					sneaking = false;
+					sliding = true;
+					slideCounter = 0f;
+				}else if(!sliding){
+					dashing = false;
+					sneaking = false;
+					crouching = true;
+				}
+
+			} else {
+				crouching = false;
+			}
+			if(sliding && (slideCounter >= slideTimer/3 && (Input.GetKeyUp(KeyCode.S)) || 
+		             (slideCounter >= slideTimer))){
+				if(slideCounter >= 3*slideTimer/4){
+					crouching = true;
+				} else if(slideCounter >= 3*slideTimer/8){
+
+				}else if(slideCounter >= slideTimer/3){
+					dashing = true;
+				}
+				sliding = false;
+
+			} else if (sliding && slideCounter < slideTimer){
+				slideCounter += 1*Time.deltaTime;
+			}
+		}else{
 			crouching = false;
+			sliding = false;
+		}
+	}
+
+	void checkForSneak(){
+		if(grounded && Input.GetKey(KeyCode.LeftShift)){
+		   sneaking = true;
+			crouching = false;
+			dashing = false;
+		}else
+			sneaking = false;
+	}
+	//-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+    void InputMovement(){
+		getMaxSpeed();
+
+		grounded = Physics2D.OverlapCircle(groundCheck.position, goundRadius, whatIsGround);
+		if(grounded)
+			doubleJump = false;
+
+		if(move > 0 && !facingRight){
+			flip();
+		} else if(move < 0 && facingRight){
+			flip();
 		}
 
+		rigidbody2D.velocity = new Vector2(move * maxSpeed, rigidbody2D.velocity.y);
 
+		updateAnimations();
+    }
 
+	void getMaxSpeed(){
+		if(!doubleJump){
+			if(!(sliding || dashing || crouching || sneaking))
+				maxSpeed = walkSpeed;
+			else {
+				if(sliding)
+					maxSpeed = slidingSpeed * (slideTimer - slideCounter)/slideTimer;
+				if(dashing){
+					maxSpeed = runSpeed;
+				}
+				if(crouching|| sneaking){
+					maxSpeed = crawlSpeed;
+				}
+			}
+			if(!sliding)
+				move = Input.GetAxis("Horizontal");
+			
+		}
+	}
 
+	void updateAnimations(){
+		anim.SetBool ("Ground",grounded);
+		anim.SetFloat("vSpeed",rigidbody2D.velocity.y);
+		anim.SetBool("Crouch",crouching);
+		anim.SetFloat("Speed", Mathf.Abs(move));
+		anim.SetBool("Dashing",dashing);
+		anim.SetBool("Sneak",sneaking);
+		anim.SetBool ("DoubleJump",doubleJump);
+		anim.SetBool ("Sliding",sliding);
+
+	}
+	
+	void flip(){
+		facingRight = !facingRight;
+		Vector3 theScale = transform.localScale;
+		theScale.x *= -1;
+		transform.localScale = theScale;
 	}
 
 	private void InputColorChange(){
@@ -148,45 +276,7 @@ public class Player : Photon.MonoBehaviour {
 		
 		
 	}
-
-    void InputMovement(){
-
-
-
-		if(dashing){
-			maxSpeed = runSpeed;
-		} else
-			maxSpeed = walkSpeed;
-		if(crouching){
-			maxSpeed = crawlSpeed;
-		}
-
-		move = Input.GetAxis("Horizontal");
-		grounded = Physics2D.OverlapCircle(groundCheck.position, goundRadius, whatIsGround);
-
-		anim.SetFloat("vSpeed",rigidbody2D.velocity.y);
-		anim.SetBool("Crouch",crouching);
-		anim.SetFloat("Speed", Mathf.Abs(move));
-		anim.SetBool("Dashing",dashing);
-		anim.SetBool ("Ground",grounded);
-
-		rigidbody2D.velocity = new Vector2(move * maxSpeed, rigidbody2D.velocity.y);
-
-		if(move > 0 && !facingRight){
-			flip();
-		} else if(move < 0 && facingRight){
-			flip();
-		}
-
-    }
-	
-	void flip(){
-		facingRight = !facingRight;
-		Vector3 theScale = transform.localScale;
-		theScale.x *= -1;
-		transform.localScale = theScale;
-	}
-
+	//-----------------------------------------------------------------------------------------------------------------------------------------
 	private void SyncedMovement(){
 
 		if(otherMove > 0 && !facingRight){
@@ -241,7 +331,7 @@ public class Player : Photon.MonoBehaviour {
 			
     }
 
-	
+	//-----------------------------------------------------------------------------------------------------------------------------------------
 	[RPC] void ChangeColorTo(Vector3 color){
 		renderer.material.color = new Color(color.x,color.y,color.z,1f);
 		if(photonView.isMine){
@@ -250,8 +340,13 @@ public class Player : Photon.MonoBehaviour {
 	}
 
 	[RPC] void displayText(string str){
-		displayTheText = true;
-		textToDisplay = str;
-		GUI.Label(new Rect(0,0,Screen.width,Screen.height),"Something");
+		if(str[0] != '/'){
+			displayTheText = true;
+			textToDisplay = str;
+			displayTextCount = 0f;
+			if(photonView.isMine){
+				photonView.RPC ("displayText",PhotonTargets.OthersBuffered,str);
+			}
+		}
 	}
 }
