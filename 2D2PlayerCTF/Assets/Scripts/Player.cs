@@ -35,12 +35,51 @@ public class Player : Photon.MonoBehaviour {
 	private Vector3 syncStartPosition = Vector3.zero;
 	private Vector3 syncEndPosition = Vector3.zero;
 
+	private string textToDisplay = "";
+	private bool displayTheText = false;
 
+	private float displayTextTimer = 10f;
+	private float displayTextCount = 0f;
+
+	private bool cheatText = false;
+	
+	string cheatCode;
+	private string cheatField = "";
+	public string[] pastComments;
 
 	void Start(){
 		anim = GetComponent<Animator>();
 
 	}
+
+	void OnGUI(){
+		//GUI.Label(new Rect(10,Screen.height - 60,400,20),"Something");
+		if(cheatText){
+			GUI.SetNextControlName("MyTextField");
+			cheatField = GUI.TextField(new Rect(10,Screen.height - 30,400,20), cheatField, 25);
+			if(cheatField != "" && Event.current.keyCode == KeyCode.Return)
+			{
+				cheatCode = cheatField;
+				cheatField = "";
+				displayTheText = true;
+				photonView.RPC("displayText",PhotonTargets.OthersBuffered,cheatCode);
+				cheatText = false;
+				displayTextCount = 0f;
+			}
+			GUI.FocusControl("MyTextField");
+		}
+
+		if(displayTheText){
+			print(cheatCode);
+			GUI.Label(new Rect(10,Screen.height - 60,400,30),cheatCode);
+		}
+		if( displayTextTimer >= displayTextCount)
+			displayTextCount += 1 * Time.deltaTime;
+		else
+			displayTheText= false;
+
+	} 
+
 
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -53,6 +92,10 @@ public class Player : Photon.MonoBehaviour {
 	}
 
 	void Update(){
+
+		if(Input.GetKeyUp(KeyCode.T)){
+			cheatText = true;
+		}
 
 		if(dashing && (Input.GetKeyUp(KeyCode.D)||Input.GetKeyUp(KeyCode.A)) && dashTimer < 0 ){
 			dashing = false;
@@ -144,8 +187,6 @@ public class Player : Photon.MonoBehaviour {
 		transform.localScale = theScale;
 	}
 
-
-
 	private void SyncedMovement(){
 
 		if(otherMove > 0 && !facingRight){
@@ -208,4 +249,9 @@ public class Player : Photon.MonoBehaviour {
 		}
 	}
 
+	[RPC] void displayText(string str){
+		displayTheText = true;
+		textToDisplay = str;
+		GUI.Label(new Rect(0,0,Screen.width,Screen.height),"Something");
+	}
 }
