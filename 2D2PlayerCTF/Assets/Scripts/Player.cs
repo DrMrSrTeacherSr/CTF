@@ -6,7 +6,7 @@ public class Player : Photon.MonoBehaviour {
 	float move;
 	private bool facingRight = true;
 	Animator anim;
-	
+	public BoxCollider2D collider;
 	public float maxSpeed = 2f;
 	public float walkSpeed = 2f;
 
@@ -21,6 +21,7 @@ public class Player : Photon.MonoBehaviour {
 	//----------------------------------------------------------------------
 	public float slidingSpeed = 10f;
 	public bool sliding = false;
+	public bool slidingShort = false;
 	public float slideTimer = 2f;
 	private float slideCounter = 0f;
 
@@ -188,22 +189,29 @@ public class Player : Photon.MonoBehaviour {
 
 			} else {
 				crouching = false;
+				slidingShort = false;
 			}
 			if(sliding && (slideCounter >= slideTimer/3 && (Input.GetKeyUp(KeyCode.S)) || 
 		             (slideCounter >= slideTimer))){
 				if(slideCounter >= 3*slideTimer/4){
 					crouching = true;
+					slidingShort = true;
 				} else if(slideCounter >= 3*slideTimer/8){
-
+					slidingShort = false;
 				}else if(slideCounter >= slideTimer/3){
 					dashing = true;
+					slidingShort = false;
 				}
 				sliding = false;
+
 
 			} else if (sliding && slideCounter < slideTimer){
 				slideCounter += 1*Time.deltaTime;
 			}
+			if(slideCounter > slideTimer/7 && sliding)
+				slidingShort = true;
 		}else{
+			slidingShort = false;
 			crouching = false;
 			sliding = false;
 		}
@@ -242,10 +250,10 @@ public class Player : Photon.MonoBehaviour {
 		if(rightWall && movement > 0)
 			movement = -.1f;
 
-
 		rigidbody2D.velocity = new Vector2(movement, rigidbody2D.velocity.y);
 
 		updateAnimations();
+		adjustCollisionBox();
     }
 
 	void getMaxSpeed(){
@@ -278,6 +286,16 @@ public class Player : Photon.MonoBehaviour {
 		anim.SetBool ("DoubleJump",doubleJump);
 		anim.SetBool ("Sliding",sliding);
 
+	}
+
+	void adjustCollisionBox(){
+		if(crouching || slidingShort){
+			collider.center = new Vector2(collider.center.x,-.18f);
+			collider.size = new Vector2(.89f,.45f);
+		}else {
+			collider.center = new Vector2(collider.center.x,.09f);
+			collider.size = new Vector2(.28f,.69f);
+		}
 	}
 	
 	void flip(){
