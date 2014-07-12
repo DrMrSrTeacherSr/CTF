@@ -42,11 +42,19 @@ public class Player : Photon.MonoBehaviour {
 	public LayerMask whatIsGround;
 	public float jumpForce = 700f;
 
+	//Wall Check
+	//----------------------------------------------------------------------
+	public bool leftWall = false;
+	public bool rightWall = false;
+	public Transform leftWallCheck;
+	public Transform rightWallCheck;
+	private float shortRadius = 0.2f;
+
 	//Syncing
 	//----------------------------------------------------------------------
 	private float otherMove;
 	private float otherVSpeed;
-	private bool otherGrounded; //Condense into 0101010101
+	private bool otherGrounded; //Condense into 0101110101
 	private bool otherCrouch;
 	private bool otherDash;
 
@@ -216,6 +224,9 @@ public class Player : Photon.MonoBehaviour {
 		getMaxSpeed();
 
 		grounded = Physics2D.OverlapCircle(groundCheck.position, goundRadius, whatIsGround);
+		leftWall = Physics2D.OverlapCircle(leftWallCheck.position, shortRadius, whatIsGround);
+		rightWall = Physics2D.OverlapCircle(rightWallCheck.position, shortRadius, whatIsGround);
+
 		if(grounded)
 			doubleJump = false;
 
@@ -225,7 +236,14 @@ public class Player : Photon.MonoBehaviour {
 			flip();
 		}
 
-		rigidbody2D.velocity = new Vector2(move * maxSpeed, rigidbody2D.velocity.y);
+		float movement = move * maxSpeed;
+		if(leftWall && movement < 0)
+			movement = .1f;
+		if(rightWall && movement > 0)
+			movement = -.1f;
+
+
+		rigidbody2D.velocity = new Vector2(movement, rigidbody2D.velocity.y);
 
 		updateAnimations();
     }
