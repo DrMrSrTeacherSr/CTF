@@ -51,6 +51,11 @@ public class Player : Photon.MonoBehaviour {
 	public Transform rightWallCheck;
 	private float shortRadius = 0.2f;
 
+	//Roof Check
+	//----------------------------------------------------------------------
+	public bool roof = true;
+	public Transform roofCheck;
+
 	//Syncing
 	//----------------------------------------------------------------------
 	private float otherMove;
@@ -163,20 +168,22 @@ public class Player : Photon.MonoBehaviour {
 	}
 
 	void checkForJump(){
-		if((grounded||!doubleJump) && Input.GetKeyDown(KeyCode.W) && !sliding){ 
-			Vector3 v = rigidbody2D.velocity;
+		if(!roof){
+			if((grounded||!doubleJump) && Input.GetKeyDown(KeyCode.W) && !sliding){ 
+				Vector3 v = rigidbody2D.velocity;
 				v.y = 12.5f;
-			rigidbody2D.velocity = v;
-			grounded = false;
-			if(!doubleJump && !grounded)
-				doubleJump = true;
-		} 
+				rigidbody2D.velocity = v;
+				grounded = false;
+				if(!doubleJump && !grounded)
+					doubleJump = true;
+			} 
+		}
 	}
 
 	void checkForCrouch(){
 		if(grounded){
 			if(grounded && Input.GetKey(KeyCode.S)){
-				if(dashing && grounded){
+				if(dashing && grounded && !crouching){
 					dashing = false;
 					sneaking = false;
 					sliding = true;
@@ -188,21 +195,27 @@ public class Player : Photon.MonoBehaviour {
 				}
 
 			} else {
-				crouching = false;
-				slidingShort = false;
-			}
-			if(sliding && (slideCounter >= slideTimer/3 && (Input.GetKeyUp(KeyCode.S)) || 
-		             (slideCounter >= slideTimer))){
-				if(slideCounter >= 3*slideTimer/4){
-					crouching = true;
-					slidingShort = true;
-				} else if(slideCounter >= 3*slideTimer/8){
-					slidingShort = false;
-				}else if(slideCounter >= slideTimer/3){
-					dashing = true;
+				if(!roof){
+					crouching = false;
 					slidingShort = false;
 				}
-				sliding = false;
+			}
+			if(sliding && (slideCounter >= slideTimer/3 && (Input.GetKeyUp(KeyCode.S)) || (slideCounter >= slideTimer))){
+				if(roof){
+					crouching = true;
+					sliding = false;
+				}else{
+					if(slideCounter >= 3*slideTimer/4){
+						crouching = true;
+						slidingShort = true;
+					} else if(slideCounter >= 3*slideTimer/8){
+						slidingShort = false;
+					}else if(slideCounter >= slideTimer/3){
+						dashing = true;
+						slidingShort = false;
+					}
+					sliding = false;
+				}
 
 
 			} else if (sliding && slideCounter < slideTimer){
@@ -211,9 +224,14 @@ public class Player : Photon.MonoBehaviour {
 			if(slideCounter > slideTimer/7 && sliding)
 				slidingShort = true;
 		}else{
-			slidingShort = false;
-			crouching = false;
-			sliding = false;
+			if(roof && grounded){
+				crouching = true;
+				sliding = false;
+			}else{
+				slidingShort = false;
+				crouching = false;
+				sliding = false;
+			}
 		}
 	}
 
@@ -231,6 +249,7 @@ public class Player : Photon.MonoBehaviour {
     void InputMovement(){
 		getMaxSpeed();
 
+		roof = Physics2D.OverlapCircle(roofCheck.position, shortRadius, whatIsGround);
 		grounded = Physics2D.OverlapCircle(groundCheck.position, goundRadius, whatIsGround);
 		leftWall = Physics2D.OverlapCircle(leftWallCheck.position, shortRadius, whatIsGround);
 		rightWall = Physics2D.OverlapCircle(rightWallCheck.position, shortRadius, whatIsGround);
@@ -245,9 +264,10 @@ public class Player : Photon.MonoBehaviour {
 		}
 
 		float movement = move * maxSpeed;
-		if(leftWall && movement < 0)
+
+		if(movement < 0 && ((leftWall && facingRight) || (rightWall && !facingRight)))
 			movement = .1f;
-		if(rightWall && movement > 0)
+		else if(movement > 0 && ((rightWall && facingRight)|| (leftWall && !facingRight)))
 			movement = -.1f;
 
 		rigidbody2D.velocity = new Vector2(movement, rigidbody2D.velocity.y);
@@ -290,11 +310,13 @@ public class Player : Photon.MonoBehaviour {
 
 	void adjustCollisionBox(){
 		if(crouching || slidingShort){
-			collider.center = new Vector2(collider.center.x,-.18f);
-			collider.size = new Vector2(.89f,.45f);
+			collider.center = new Vector2(collider.center.x,-.26f);
+			collider.size = new Vector2(.88f,.18f);
+			roofCheck.localPosition = new Vector2(roofCheck.localPosition.x,.128f);
 		}else {
-			collider.center = new Vector2(collider.center.x,.09f);
+			collider.center = new Vector2(collider.center.x,.1f);
 			collider.size = new Vector2(.28f,.69f);
+			roofCheck.localPosition = new Vector2(roofCheck.localPosition.x,.437f);
 		}
 	}
 	
