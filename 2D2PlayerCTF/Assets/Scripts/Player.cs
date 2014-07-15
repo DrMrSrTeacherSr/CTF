@@ -139,6 +139,7 @@ public class Player : Photon.MonoBehaviour {
 		checkForCrouch();
 		checkForSneak();
 
+
 	}
 
 	void checkForText(){
@@ -172,8 +173,7 @@ public class Player : Photon.MonoBehaviour {
 	void checkForJump(){
 
 		if(!roof){
-
-			if((grounded||!doubleJump||wallSliding) && Input.GetKeyDown(KeyCode.W) && !sliding){ 
+			if(((grounded||!doubleJump||wallSliding) && Input.GetKeyDown(KeyCode.W) && !sliding)){ 
 				Vector3 v = rigidbody2D.velocity;
 				v.y = 12.5f;
 				rigidbody2D.velocity = v;
@@ -183,7 +183,6 @@ public class Player : Photon.MonoBehaviour {
 					doubleJump = true;
 					if(wallSliding){
 						flip ();
-						Debug.Log("HERE");
 						wallJumped = true;
 						wallSliding = false;
 					}
@@ -194,6 +193,9 @@ public class Player : Photon.MonoBehaviour {
 			}
 		}
 	}
+
+
+
 
 	void checkForCrouch(){
 		if(grounded){
@@ -265,7 +267,7 @@ public class Player : Photon.MonoBehaviour {
 
 
 		roof = Physics2D.OverlapCircle(roofCheck.position, shortRadius, whatIsGround);
-		grounded = Physics2D.OverlapCircle(groundCheck.position, goundRadius, whatIsGround);
+		grounded = Physics2D.OverlapCircle(groundCheck.position, goundRadius/10, whatIsGround);
 		backWall = Physics2D.OverlapCircle(leftWallCheck.position, shortRadius, whatIsGround);
 		frontWall = Physics2D.OverlapCircle(rightWallCheck.position, shortRadius, whatIsGround);
 
@@ -283,30 +285,18 @@ public class Player : Photon.MonoBehaviour {
 		}else{
 			wallSliding = false;
 		}
-		if(wallJumped){
-			if(facingRight)
-			   move = 2f;
-			else
-				move = -2f;
-		}
 
-		if(move > 0 && !facingRight && !wallJumped){
+
+		if((move > 0 && !facingRight && !wallJumped)){
 			flip();
-		} else if(move < 0 && facingRight && !wallJumped){
+		} else if((move < 0 && facingRight && !wallJumped)){
 			flip();
 		}
 
 		getMaxSpeed();
 
 		float movement = move * maxSpeed;
-	
-	
-		if(grounded){
-			doubleJump = false;
-			wallSliding = false;
-			wallJumped = false;
 
-		}
 
 		if(wallSliding)
 			wallJumped = false;
@@ -317,6 +307,13 @@ public class Player : Photon.MonoBehaviour {
 
 		updateAnimations();
 		adjustCollisionBox();
+
+		if(grounded){
+			doubleJump = false;
+			wallSliding = false;
+			wallJumped = false;
+			
+		}
     }
 
 	void getMaxSpeed(){
@@ -339,6 +336,13 @@ public class Player : Photon.MonoBehaviour {
 		if(wallSliding){
 			move = 0f;
 		}
+		if(wallJumped){
+			if(facingRight)
+				move = 2f;
+			else
+				move = -2f;
+		}
+
 
 	}
 
