@@ -4,7 +4,7 @@ using System.Collections;
 public class Player : Photon.MonoBehaviour {
 
 	float move;
-	private bool facingRight = true;
+	public bool facingRight = true;
 	Animator anim;
 	public BoxCollider2D collider;
 	public float maxSpeed = 2f;
@@ -43,10 +43,12 @@ public class Player : Photon.MonoBehaviour {
 	public LayerMask whatIsGround;
 	public float jumpForce = 700f;
 
-	//Wall Check
+	//Wall
 	//----------------------------------------------------------------------
-	public bool leftWall = false;
-	public bool rightWall = false;
+	public bool backWall = false;
+	public bool frontWall = false;
+	public bool wallSliding = false;
+	public bool wallJumped = false;
 	public Transform leftWallCheck;
 	public Transform rightWallCheck;
 	private float shortRadius = 0.2f;
@@ -168,15 +170,28 @@ public class Player : Photon.MonoBehaviour {
 	}
 
 	void checkForJump(){
+
 		if(!roof){
-			if((grounded||!doubleJump) && Input.GetKeyDown(KeyCode.W) && !sliding){ 
+
+			if((grounded||!doubleJump||wallSliding) && Input.GetKeyDown(KeyCode.W) && !sliding){ 
 				Vector3 v = rigidbody2D.velocity;
 				v.y = 12.5f;
 				rigidbody2D.velocity = v;
 				grounded = false;
-				if(!doubleJump && !grounded)
+
+				if((!doubleJump && !grounded) || wallSliding){
 					doubleJump = true;
-			} 
+					if(wallSliding){
+						flip ();
+						Debug.Log("HERE");
+						wallJumped = true;
+						wallSliding = false;
+					}
+
+				}
+
+
+			}
 		}
 	}
 
@@ -247,37 +262,65 @@ public class Player : Photon.MonoBehaviour {
 
 
     void InputMovement(){
-		getMaxSpeed();
+
 
 		roof = Physics2D.OverlapCircle(roofCheck.position, shortRadius, whatIsGround);
 		grounded = Physics2D.OverlapCircle(groundCheck.position, goundRadius, whatIsGround);
-		leftWall = Physics2D.OverlapCircle(leftWallCheck.position, shortRadius, whatIsGround);
-		rightWall = Physics2D.OverlapCircle(rightWallCheck.position, shortRadius, whatIsGround);
+		backWall = Physics2D.OverlapCircle(leftWallCheck.position, shortRadius, whatIsGround);
+		frontWall = Physics2D.OverlapCircle(rightWallCheck.position, shortRadius, whatIsGround);
 
-		if(grounded)
+		
+
+
+
+		float verticalSpeedLimit = 1f;
+		if(frontWall){
+			wallJumped = false;
+			wallSliding = true;
 			doubleJump = false;
+			dashing = false;
+			verticalSpeedLimit = .5f;
+		}else{
+			wallSliding = false;
+		}
+		if(wallJumped){
+			if(facingRight)
+			   move = 2f;
+			else
+				move = -2f;
+		}
 
-		if(move > 0 && !facingRight){
+		if(move > 0 && !facingRight && !wallJumped){
 			flip();
-		} else if(move < 0 && facingRight){
+		} else if(move < 0 && facingRight && !wallJumped){
 			flip();
 		}
 
+		getMaxSpeed();
+
 		float movement = move * maxSpeed;
+	
+	
+		if(grounded){
+			doubleJump = false;
+			wallSliding = false;
+			wallJumped = false;
 
-		if(movement < 0 && ((leftWall && facingRight) || (rightWall && !facingRight)))
-			movement = .1f;
-		else if(movement > 0 && ((rightWall && facingRight)|| (leftWall && !facingRight)))
-			movement = -.1f;
+		}
 
-		rigidbody2D.velocity = new Vector2(movement, rigidbody2D.velocity.y);
+		if(wallSliding)
+			wallJumped = false;
+
+
+
+		rigidbody2D.velocity = new Vector2(movement, rigidbody2D.velocity.y * verticalSpeedLimit);
 
 		updateAnimations();
 		adjustCollisionBox();
     }
 
 	void getMaxSpeed(){
-		if(!doubleJump){
+		if(!doubleJump ){
 			if(!(sliding || dashing || crouching || sneaking))
 				maxSpeed = walkSpeed;
 			else {
@@ -292,8 +335,11 @@ public class Player : Photon.MonoBehaviour {
 			}
 			if(!sliding)
 				move = Input.GetAxis("Horizontal");
-			
 		}
+		if(wallSliding){
+			move = 0f;
+		}
+
 	}
 
 	void updateAnimations(){
@@ -305,14 +351,14 @@ public class Player : Photon.MonoBehaviour {
 		anim.SetBool("Sneak",sneaking);
 		anim.SetBool ("DoubleJump",doubleJump);
 		anim.SetBool ("Sliding",sliding);
-
+		anim.SetBool ("WallSlide",wallSliding);
 	}
 
 	void adjustCollisionBox(){
 		if(crouching || slidingShort){
 			collider.center = new Vector2(collider.center.x,-.26f);
 			collider.size = new Vector2(.88f,.18f);
-			roofCheck.localPosition = new Vector2(roofCheck.localPosition.x,.128f);
+			roofCheck.localPosition = new Vector2(roofCheck.localPosition.x,.14f);
 		}else {
 			collider.center = new Vector2(collider.center.x,.1f);
 			collider.size = new Vector2(.28f,.69f);
