@@ -198,7 +198,7 @@ public class Player : Photon.MonoBehaviour {
 	void checkForCrouch(){
 		if(grounded){
 			if(grounded && Input.GetKey(KeyCode.S)){
-				if(dashing && grounded && !crouching){
+				if(dashing && grounded && !crouching && Input.GetKeyDown(KeyCode.S)){
 					dashing = false;
 					sneaking = false;
 					sliding = true;
@@ -274,7 +274,7 @@ public class Player : Photon.MonoBehaviour {
 
 
 		float verticalSpeedLimit = 1f;
-		if(frontWall){
+		if(frontWall && !grounded){
 			wallJumped = false;
 			wallSliding = true;
 			doubleJump = false;
@@ -320,7 +320,7 @@ public class Player : Photon.MonoBehaviour {
     }
 
 	void getMaxSpeed(){
-		if(!doubleJump ){
+		if(!doubleJump){
 			if(!(sliding || dashing || crouching || sneaking))
 				maxSpeed = walkSpeed;
 			else {
