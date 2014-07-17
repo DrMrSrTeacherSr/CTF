@@ -340,6 +340,10 @@ public class Player : Photon.MonoBehaviour {
 		if(!frontWall){
 			wallHanging = false;
 		}
+		if(ladder || wallHanging)
+			rigidbody2D.gravityScale = 0f;
+		else
+			rigidbody2D.gravityScale = 1f;
 
 
 		if((move > 0 && !facingRight && !wallJumped)){
