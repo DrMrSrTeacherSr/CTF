@@ -53,10 +53,15 @@ public class Player : Photon.MonoBehaviour {
 	//----------------------------------------------------------------------
 	public bool backWall = false;
 	public bool frontWall = false;
+	public bool hangCheck = false;
 	public bool wallSliding = false;
+	public bool wallHanging = false;
 	public bool wallJumped = false;
 	public Transform leftWallCheck;
 	public Transform rightWallCheck;
+	public Transform rightWallHangCheck2;
+	public Transform rightWallHangCheck;
+
 	private float shortRadius = 0.2f;
 
 	//Roof Check
@@ -157,8 +162,7 @@ public class Player : Photon.MonoBehaviour {
 	void checkForDashing(){
 		if(dashing && (Input.GetKeyUp(KeyCode.D)||Input.GetKeyUp(KeyCode.A)) && dashTimer < 0 ){
 			dashing = false;
-		}
-		
+		}		
 		if(Input.GetKeyDown(KeyCode.D)||Input.GetKeyDown(KeyCode.A) && grounded && !crouching && !sliding){
 			if ( dashTimer > 0 && dashCounter == 1/*Number of Taps you want Minus One*/){
 				dashing = true;
@@ -179,13 +183,20 @@ public class Player : Photon.MonoBehaviour {
 	void checkForJump(){
 
 		if(!roof && !ladder){
-			if(((grounded||!doubleJump||wallSliding) && Input.GetKeyDown(KeyCode.W) && !sliding)){ 
+			if(((grounded||!doubleJump||wallSliding||wallHanging) && Input.GetKeyDown(KeyCode.W) && !sliding)){ 
 				Vector3 v = rigidbody2D.velocity;
 				v.y = 12.5f;
 				rigidbody2D.velocity = v;
 				grounded = false;
 
-				if((!doubleJump && !grounded) || wallSliding){
+				if(wallHanging){
+					Vector3 vx = rigidbody2D.velocity;
+					vx.x = 1f;
+					rigidbody2D.velocity = vx;
+
+				}
+
+				if((!doubleJump && !grounded && !wallHanging) || wallSliding){
 					doubleJump = true;
 					if(wallSliding){
 						flip ();
@@ -213,7 +224,7 @@ public class Player : Photon.MonoBehaviour {
 				climbing = false;
 				rigidbody2D.velocity = v;
 			}
-		}
+		} 
 	}
 
 
@@ -299,21 +310,35 @@ public class Player : Photon.MonoBehaviour {
 
 
 		roof = Physics2D.OverlapCircle(roofCheck.position, shortRadius, whatIsGround);
-		grounded = Physics2D.OverlapCircle(groundCheck.position, goundRadius/10, whatIsGround);
-		backWall = Physics2D.OverlapCircle(leftWallCheck.position, shortRadius, whatIsGround);
-		frontWall = Physics2D.OverlapCircle(rightWallCheck.position, shortRadius, whatIsGround);
+		grounded = Physics2D.OverlapCircle(groundCheck.position, goundRadius/2, whatIsGround);
+		backWall = Physics2D.OverlapCircle(leftWallCheck.position,shortRadius/10, whatIsGround);
+		frontWall = Physics2D.OverlapCircle(rightWallCheck.position,shortRadius/10, whatIsGround) || Physics2D.OverlapPoint(rightWallHangCheck2.position, whatIsGround);
+		hangCheck = Physics2D.OverlapPoint(rightWallHangCheck2.position, whatIsGround);
+		wallHanging = !Physics2D.OverlapPoint(rightWallHangCheck.position, whatIsGround) && hangCheck && frontWall && !Input.GetKey(KeyCode.S);
 
 
 
-		if(frontWall && !grounded && !ladder){
+		if(frontWall && !grounded && !ladder && !wallHanging){
 			wallJumped = false;
 			wallSliding = true;
 			doubleJump = false;
 			dashing = false;
-			//verticalSpeedLimit = .5f;
+			rigidbody2D.gravityScale = 1f;
+		}else if (wallHanging && !Input.GetKey(KeyCode.W)){
+			verticalSpeedLimit = 0f;
+			rigidbody2D.gravityScale = 0f;
+			wallJumped = false;
+			wallSliding = false;
+			doubleJump = true;
+			dashing = false;
+
 		}else{
 			wallSliding = false;
 			verticalSpeedLimit = 1f;
+			rigidbody2D.gravityScale = 1f;
+		}
+		if(!frontWall){
+			wallHanging = false;
 		}
 
 
@@ -378,6 +403,7 @@ public class Player : Photon.MonoBehaviour {
 		}
 
 
+
 	}
 
 	void updateAnimations(){
@@ -392,6 +418,7 @@ public class Player : Photon.MonoBehaviour {
 		anim.SetBool ("WallSlide",wallSliding);
 		anim.SetBool ("Climbing",climbing);
 		anim.SetBool ("OnLadder",ladder);
+		anim.SetBool ("Hanging",wallHanging);
 	}
 
 	void adjustCollisionBox(){
