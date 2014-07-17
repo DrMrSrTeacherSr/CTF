@@ -246,8 +246,10 @@ MonoBehaviour:
   groundCheck: {fileID: 400008}
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 4294967039
+    m_Bits: 4294966527
   jumpForce: 500
+  ladder: 0
+  climbing: 0
   backWall: 0
   frontWall: 0
   wallSliding: 0

@@ -4,6 +4,7 @@ using System.Collections;
 public class Player : Photon.MonoBehaviour {
 
 	float move;
+	float verticalSpeedLimit = 1f;
 	public bool facingRight = true;
 	Animator anim;
 	public BoxCollider2D collider;
@@ -42,6 +43,11 @@ public class Player : Photon.MonoBehaviour {
 	private float goundRadius = 0.1f;
 	public LayerMask whatIsGround;
 	public float jumpForce = 700f;
+
+	//Ladder
+	//----------------------------------------------------------------------
+	public bool ladder = false;
+	public bool climbing = false;
 
 	//Wall
 	//----------------------------------------------------------------------
@@ -172,7 +178,7 @@ public class Player : Photon.MonoBehaviour {
 
 	void checkForJump(){
 
-		if(!roof){
+		if(!roof && !ladder){
 			if(((grounded||!doubleJump||wallSliding) && Input.GetKeyDown(KeyCode.W) && !sliding)){ 
 				Vector3 v = rigidbody2D.velocity;
 				v.y = 12.5f;
@@ -191,6 +197,22 @@ public class Player : Photon.MonoBehaviour {
 
 
 			}
+		}else if (ladder){
+			if(Input.GetKey(KeyCode.W)){
+				Vector3 v = rigidbody2D.velocity;
+				v.y = 3f;
+				climbing = true;
+				rigidbody2D.velocity = v;
+				Vector3 vx = rigidbody2D.velocity;
+				vx.x = 0f;
+				rigidbody2D.velocity = vx;
+			}else{
+				Vector3 v = rigidbody2D.velocity;
+				v.y = 0f;
+				rigidbody2D.gravityScale = 0f;
+				climbing = false;
+				rigidbody2D.velocity = v;
+			}
 		}
 	}
 
@@ -198,7 +220,7 @@ public class Player : Photon.MonoBehaviour {
 
 
 	void checkForCrouch(){
-		if(grounded){
+		if(grounded && !ladder){
 			if(grounded && Input.GetKey(KeyCode.S)){
 				if(dashing && grounded && !crouching && Input.GetKeyDown(KeyCode.S)){
 					dashing = false;
@@ -240,7 +262,12 @@ public class Player : Photon.MonoBehaviour {
 			}
 			if(slideCounter > slideTimer/7 && sliding)
 				slidingShort = true;
-		}else{
+		}else if(wallSliding){
+			if(Input.GetKey(KeyCode.S))
+				verticalSpeedLimit = 1f;
+			else
+				verticalSpeedLimit = .5f;
+		}else if(!ladder){
 			if(roof && grounded){
 				crouching = true;
 				sliding = false;
@@ -249,7 +276,12 @@ public class Player : Photon.MonoBehaviour {
 				crouching = false;
 				sliding = false;
 			}
-		}
+		} else if(ladder && Input.GetKey(KeyCode.S)){
+			Vector3 v = rigidbody2D.velocity;
+			v.y = -3f;
+			climbing = true;
+			rigidbody2D.velocity = v;
+		} 
 	}
 
 	void checkForSneak(){
@@ -271,19 +303,17 @@ public class Player : Photon.MonoBehaviour {
 		backWall = Physics2D.OverlapCircle(leftWallCheck.position, shortRadius, whatIsGround);
 		frontWall = Physics2D.OverlapCircle(rightWallCheck.position, shortRadius, whatIsGround);
 
-		
 
 
-
-		float verticalSpeedLimit = 1f;
-		if(frontWall && !grounded){
+		if(frontWall && !grounded && !ladder){
 			wallJumped = false;
 			wallSliding = true;
 			doubleJump = false;
 			dashing = false;
-			verticalSpeedLimit = .5f;
+			//verticalSpeedLimit = .5f;
 		}else{
 			wallSliding = false;
+			verticalSpeedLimit = 1f;
 		}
 
 
@@ -342,6 +372,10 @@ public class Player : Photon.MonoBehaviour {
 			else
 				move = -2f;
 		}
+		if(ladder){
+			move = Input.GetAxis("Horizontal");
+			doubleJump = false;
+		}
 
 
 	}
@@ -356,6 +390,8 @@ public class Player : Photon.MonoBehaviour {
 		anim.SetBool ("DoubleJump",doubleJump);
 		anim.SetBool ("Sliding",sliding);
 		anim.SetBool ("WallSlide",wallSliding);
+		anim.SetBool ("Climbing",climbing);
+		anim.SetBool ("OnLadder",ladder);
 	}
 
 	void adjustCollisionBox(){
@@ -377,6 +413,28 @@ public class Player : Photon.MonoBehaviour {
 		transform.localScale = theScale;
 	}
 
+
+	public void OnTriggerStay2D(Collider2D col)
+	{
+
+		if(col.gameObject.tag == "Ladder" && !sliding)
+		{
+			ladder = true;
+			crouching = false;
+			rigidbody2D.gravityScale = 0f;
+		}
+	}
+
+	public void OnTriggerExit2D(Collider2D col)
+	{
+		
+		if(col.gameObject.tag == "Ladder")
+		{
+			ladder = false;
+			climbing = false;
+			rigidbody2D.gravityScale = 1f;
+		}
+	}
 	private void InputColorChange(){
 		if(Input.GetKeyDown(KeyCode.R)){
 			ChangeColorTo(new Vector3(Random.Range(0f,1f),Random.Range(0f,1f),Random.Range(0f,1f)));
