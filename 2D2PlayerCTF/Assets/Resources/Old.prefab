@@ -89,7 +89,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8e6af92b5d7554fb79c39c824a53f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  facingRight: 1
+  collider: {fileID: 0}
   maxSpeed: 10
+  walkSpeed: 2
+  runSpeed: 6
+  dashing: 0
+  dashTimer: .5
+  slidingSpeed: 10
+  sliding: 0
+  slidingShort: 0
+  slideTimer: 2
+  crawlSpeed: 1
+  crouching: 0
+  sneaking: 0
+  doubleJump: 1
+  groundCheck: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  jumpForce: 700
+  ladder: 0
+  climbing: 0
+  backWall: 0
+  frontWall: 0
+  hangCheck: 0
+  wallSliding: 0
+  wallHanging: 0
+  wallJumped: 0
+  leftWallCheck: {fileID: 0}
+  rightWallCheck: {fileID: 0}
+  rightWallHangCheck2: {fileID: 0}
+  rightWallHangCheck: {fileID: 0}
+  roof: 1
+  roofCheck: {fileID: 0}
+  pastComments: []
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1

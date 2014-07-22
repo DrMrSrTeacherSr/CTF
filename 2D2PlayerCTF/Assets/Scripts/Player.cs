@@ -143,12 +143,13 @@ public class Player : Photon.MonoBehaviour {
 	//Update
 	//-----------------------------------------------------------------------------------------------------------------------------------------
 	void Update(){
-
+		if(photonView.isMine){
 		checkForText();
 		checkForDashing();
 		checkForJump();
 		checkForCrouch();
 		checkForSneak();
+		}
 
 
 	}
@@ -483,11 +484,12 @@ public class Player : Photon.MonoBehaviour {
 		}
 
 		anim.SetFloat("Speed", Mathf.Abs(otherMove));
-		anim.SetBool ("Ground",otherGrounded);
+		//anim.SetBool ("Ground",otherGrounded);
 		anim.SetFloat("vSpeed",otherVSpeed);
-		anim.SetBool("Crouch",otherCrouch);
-		anim.SetBool("Dashing",otherDash);
+		//anim.SetBool("Crouch",otherCrouch);
+		//anim.SetBool("Dashing",otherDash);
 		syncTime += Time.deltaTime;
+		//print (syncDelay/syncTime);
 		transform.position = Vector3.Lerp(syncStartPosition,syncEndPosition,syncTime/syncDelay);
 	}
 
@@ -496,10 +498,10 @@ public class Player : Photon.MonoBehaviour {
         if (stream.isWriting){
             stream.SendNext(transform.position);
 			stream.SendNext(rigidbody2D.velocity);
-			stream.SendNext(move);
-			stream.SendNext(grounded);
-			stream.SendNext(crouching);
-			stream.SendNext(dashing);
+			//stream.SendNext(move);
+			//stream.SendNext(grounded);
+			//stream.SendNext(crouching);
+			//stream.SendNext(dashing);
 			 
 		}else {
 
@@ -507,10 +509,10 @@ public class Player : Photon.MonoBehaviour {
 
 			Vector3 syncPosition = (Vector3)stream.ReceiveNext();
 			Vector2 syncVelocity = (Vector2)stream.ReceiveNext();
-			otherMove = (float)stream.ReceiveNext();
-			otherGrounded = (bool)stream.ReceiveNext();
-			otherCrouch = (bool)stream.ReceiveNext();
-			otherDash = (bool)stream.ReceiveNext();
+			//otherMove = (float)stream.ReceiveNext();
+			//otherGrounded = (bool)stream.ReceiveNext();
+			//otherCrouch = (bool)stream.ReceiveNext();
+			//otherDash = (bool)stream.ReceiveNext();
 
 			otherVSpeed = syncVelocity.y;
 
@@ -520,9 +522,10 @@ public class Player : Photon.MonoBehaviour {
 
 			syncEndPosition.x = syncPosition.x + syncVelocity.x * syncDelay;
 			syncEndPosition.y = syncPosition.y + syncVelocity.y * syncDelay;
-			//syncStartPosition = rigidbody2D.position;
 
-			syncStartPosition = transform.position;
+			syncStartPosition = rigidbody2D.position;
+
+			//syncStartPosition = transform.position;
 
 		}
 			

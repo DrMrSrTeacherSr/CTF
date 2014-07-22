@@ -10,13 +10,19 @@ public class NetworkManager : Photon.MonoBehaviour {
 	private bool createServer = false;
 	private bool joinRoom = false;
 
+	public Camera standByCamera;
 
+	void Awake(){
+		Application.targetFrameRate = -1;
+	}
 
 	// Use this for initialization
 	void Start (){
-		PhotonNetwork.sendRate = 66; //Play with this and navmeshs
-		PhotonNetwork.sendRateOnSerialize = 66;
-        PhotonNetwork.ConnectUsingSettings("0.1"); //Version number of the game
+
+		PhotonNetwork.sendRate = 60; //Play with this and navmeshs
+		PhotonNetwork.sendRateOnSerialize = 60;
+        PhotonNetwork.ConnectUsingSettings("preAlpha"); //Version number of the game
+
 	}
 	
 	// Update is called once per frame

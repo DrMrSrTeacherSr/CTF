@@ -193,7 +193,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 190762677}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.76102448, y: -1.56753278, z: 0}
+  m_LocalPosition: {x: 6.76102448, y: -1.87597311, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -379,7 +379,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 534454828}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.73419333, y: 2.88771796, z: 0}
+  m_LocalPosition: {x: 6.75475597, y: 2.9699688, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -456,7 +456,7 @@ GameObject:
   - 4: {fileID: 871984951}
   - 114: {fileID: 871984952}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: _SCRIPTS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -487,6 +487,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 100000, guid: d7313a02c4f79c14a9b77dec90e028f4, type: 2}
   input: Enter Room Name Here
+  standByCamera: {fileID: 2140064622}
 --- !u!1 &1202546145
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,7 +545,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1202546145}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.73419333, y: 1.11686218, z: 0}
+  m_LocalPosition: {x: 6.75475597, y: 1.1168623, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -595,7 +596,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1495665256}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.73419333, y: .231434345, z: 0}
+  m_LocalPosition: {x: 6.77531862, y: .128621042, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -668,7 +669,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1573662809}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.76102448, y: -.767532825, z: 0}
+  m_LocalPosition: {x: 6.76102448, y: -.890908957, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -781,7 +782,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1746979296}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.9036636, y: -2.3745451, z: 0}
+  m_LocalPosition: {x: 10.9242268, y: -2.62129736, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -843,7 +844,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2002318164}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.5843358, y: -3.69053316, z: 0}
+  m_LocalPosition: {x: -6.58433533, y: -3.71109605, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -872,7 +873,7 @@ GameObject:
   - 124: {fileID: 2140064620}
   - 81: {fileID: 2140064619}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: StandByCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

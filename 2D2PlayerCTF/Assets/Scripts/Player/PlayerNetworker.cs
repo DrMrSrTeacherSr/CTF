@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerCopy : MonoBehaviour {
+public class PlayerNetworker : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
