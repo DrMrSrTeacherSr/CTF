@@ -24,8 +24,8 @@ public class PlayerView : Photon.MonoBehaviour {
 	
 	void updateAnimations(){
 
-		anim.SetFloat("vSpeed",rigidbody2D.velocity.y);
-		anim.SetFloat("Speed",Mathf.Abs(rigidbody2D.velocity.x));
+		anim.SetFloat("vSpeed",model.getYVelocity());
+		anim.SetFloat("Speed",Mathf.Abs(model.getXVelocity()));
 
 		anim.SetBool ("Ground",model.get("grounded"));
 		anim.SetBool("Crouch",model.get("crouching"));

@@ -100,7 +100,7 @@ public class PlayerController : Photon.MonoBehaviour
 		hangCheck = Physics2D.OverlapPoint (rightWallHangCheck2.position, whatIsGround);
 		wallHanging = !Physics2D.OverlapPoint (rightWallHangCheck.position, whatIsGround) && hangCheck && frontWall && !Input.GetKey (KeyCode.S);
 
-		if(frontWall && !grounded && !onLadder && !wallHanging){
+		if(frontWall && !grounded && !onLadder && !wallHanging && !sliding && !slidingShort){
 			wallSliding = true;
 			doubleJump = false;
 			wallJumped = false;
@@ -182,21 +182,21 @@ public class PlayerController : Photon.MonoBehaviour
 
 		if(jumped){
 			jumped = false;
-			model.yVelocity(verticalMovement);
+			yVelocity(verticalMovement);
 		}
 
 		if(onLadder){
-			model.yVelocity(verticalMovement);
+			yVelocity(verticalMovement);
 		}
 		
 
 		if(wallSliding){
 			moveH = 0f;
-			model.yVelocity(-.5f);
+			yVelocity(-.5f);
 		}
 
 
-		model.xVelocity(moveH);
+		xVelocity(moveH);
 	}
 
 	private void checkForJump(){
@@ -359,6 +359,18 @@ public class PlayerController : Photon.MonoBehaviour
 		}
 	}
 
+	public void xVelocity(float xVel){
+		Vector3 v = rigidbody2D.velocity;
+		v.x = xVel;
+		rigidbody2D.velocity = v;
+	}
+
+	public void yVelocity(float yVel){
+		Vector3 v = rigidbody2D.velocity;
+		v.y = yVel;
+		rigidbody2D.velocity = v;
+	}
+
 	private void updateVariables ()
 	{
 		model.set("grounded",grounded);
@@ -373,6 +385,10 @@ public class PlayerController : Photon.MonoBehaviour
 		model.set("hanging",wallHanging);
 
 		model.set("facingRight",facingRight);
+		model.setPosition(rigidbody2D.position);
+
+		model.setXVelocity(rigidbody2D.velocity.x);
+		model.setYVelocity(rigidbody2D.velocity.x);
 	}
 
 	public void OnTriggerStay2D (Collider2D col)

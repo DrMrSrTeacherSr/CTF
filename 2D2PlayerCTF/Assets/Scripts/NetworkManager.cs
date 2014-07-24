@@ -19,8 +19,8 @@ public class NetworkManager : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Start (){
 
-		PhotonNetwork.sendRate = 60; //Play with this and navmeshs
-		PhotonNetwork.sendRateOnSerialize = 60;
+		PhotonNetwork.sendRate = 20; //Play with this and navmeshs
+		PhotonNetwork.sendRateOnSerialize = 20;
         PhotonNetwork.ConnectUsingSettings("preAlpha"); //Version number of the game
 
 	}
@@ -81,7 +81,15 @@ public class NetworkManager : Photon.MonoBehaviour {
     void OnJoinedRoom() {
         Debug.Log("Connected to Room");
         //Spawn Player
-        PhotonNetwork.Instantiate(playerPrefab.name,Vector2.zero * 5, Quaternion.identity,0);
+        GameObject myPlayer = (GameObject) PhotonNetwork.Instantiate(playerPrefab.name,Vector2.zero * 5, Quaternion.identity,0);
+		((PlayerController) myPlayer.GetComponent<PlayerController>()).enabled = true;
+		//((PlayerModel) myPlayer.GetComponent<PlayerModel>()).enabled = true;
+		Rigidbody2D rigidBody = myPlayer.AddComponent<Rigidbody2D>();
+		rigidBody.gravityScale = 1f;
+		rigidBody.fixedAngle = true;
+		rigidBody.interpolation = RigidbodyInterpolation2D.Interpolate;
+		//((PlayerNetworker) myPlayer.GetComponent<PlayerNetworker>()).enabled = false;
+		//standByCamera.enabled = false;
     }
 
 }

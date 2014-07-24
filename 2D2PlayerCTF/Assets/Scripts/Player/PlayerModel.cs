@@ -6,6 +6,8 @@ public class PlayerModel : Photon.MonoBehaviour {
 
 
 	Dictionary<string,int> state;
+	float xVelocity = 0f;
+	float yVelocity = 0f;
 
 	void Start(){
 		state = new Dictionary<string, int>();
@@ -41,17 +43,30 @@ public class PlayerModel : Photon.MonoBehaviour {
 			return true;
 	}
 
-	public void xVelocity(float xVel){
-		Vector3 v = rigidbody2D.velocity;
-		v.x = xVel;
-		rigidbody2D.velocity = v;
+	public void setPosition(Vector3 pos){
+		transform.position = pos;
 	}
 
-	public void yVelocity(float yVel){
-		Vector3 v = rigidbody2D.velocity;
-		v.y = yVel;
-		rigidbody2D.velocity = v;
+	public Vector3 getPosition(){
+		return transform.position;
 	}
+
+	public void setXVelocity(float xV){
+		xVelocity = xV;
+	}
+
+	public float getXVelocity(){
+		return xVelocity;
+	}
+
+	public void setYVelocity(float yV){
+		yVelocity = yV;
+	}
+
+	public float getYVelocity(){
+		return yVelocity;
+	}
+
 
 	public void flip(){
 		Vector3 theScale = transform.localScale;
