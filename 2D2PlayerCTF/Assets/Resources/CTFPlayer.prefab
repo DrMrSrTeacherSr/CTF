@@ -12,7 +12,6 @@ GameObject:
   - 58: {fileID: 5800000}
   - 61: {fileID: 6100000}
   - 95: {fileID: 9500000}
-  - 114: {fileID: 11400002}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400008}
@@ -257,56 +256,10 @@ MonoBehaviour:
   group: 0
   prefixBackup: -1
   observed: {fileID: 11400006}
-  synchronization: 1
+  synchronization: 3
   onSerializeTransformOption: 0
   onSerializeRigidBodyOption: 2
   instantiationId: -1
---- !u!114 &11400002
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b8e6af92b5d7554fb79c39c824a53f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  facingRight: 1
-  collider: {fileID: 6100000}
-  maxSpeed: 2
-  walkSpeed: 2
-  runSpeed: 5
-  dashing: 0
-  dashTimer: .5
-  slidingSpeed: 8
-  sliding: 0
-  slidingShort: 0
-  slideTimer: 2
-  crawlSpeed: 1
-  crouching: 0
-  sneaking: 0
-  doubleJump: 1
-  groundCheck: {fileID: 400008}
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 4294966527
-  jumpForce: 500
-  ladder: 0
-  climbing: 0
-  backWall: 0
-  frontWall: 0
-  hangCheck: 0
-  wallSliding: 0
-  wallHanging: 0
-  wallJumped: 0
-  leftWallCheck: {fileID: 400006}
-  rightWallCheck: {fileID: 400010}
-  rightWallHangCheck2: {fileID: 400004}
-  rightWallHangCheck: {fileID: 400012}
-  roof: 1
-  roofCheck: {fileID: 400002}
-  pastComments: []
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -346,21 +299,15 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18d89fd413825624a9f334b03361c4fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 224224adaa6ef8941a528c454ea7635f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collider: {fileID: 6100000}
   groundCheck: {fileID: 400008}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 4294966527
-  leftWallCheck: {fileID: 400006}
-  rightWallCheck: {fileID: 400010}
-  rightWallHangCheck2: {fileID: 400004}
-  rightWallHangCheck: {fileID: 400012}
-  roofCheck: {fileID: 400002}
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1
