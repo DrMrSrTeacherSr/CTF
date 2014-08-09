@@ -22,17 +22,19 @@ public class ClimbingService : AbstractStateService {
 	}
 	
 	public override string checkExitState(PlayerController controller){
-
-		if(controller.isOnLadder() && !Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S)){
-			return "onLadder";
+		if(!controller.isOnLadder() && !controller.isGrounded()){
+			controller.getRigidbody().gravityScale = 1f;
+			return "jumpingWalk";
 		}
 		if(!controller.isOnLadder() && controller.isGrounded()){
 			controller.getRigidbody().gravityScale = 1f;
 			return "idle";
-		}else if(!controller.isOnLadder() && !controller.isGrounded()){
-			controller.getRigidbody().gravityScale = 1f;
-			return "jumpingWalk";
 		}
+		if(controller.isOnLadder() && !Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S)){
+			return "onLadder";
+		}
+
+
 		return null;
 		
 	}

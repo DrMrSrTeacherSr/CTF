@@ -31,7 +31,8 @@ public class PlayerView : Photon.MonoBehaviour {
 		anim.SetBool("onLadder",model.getOnLadder());
 
 		switch(model.getCurrentState()){
-
+		
+		case "jumping" : anim.SetInteger("animation",-1); break;
 		case "idle" : anim.SetInteger("animation",0); break;
 		case "walking" : anim.SetInteger("animation",1);break;
 		case "dashing" : anim.SetInteger("animation",2);break;

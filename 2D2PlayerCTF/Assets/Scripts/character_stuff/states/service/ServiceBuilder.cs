@@ -100,6 +100,7 @@ public class ServiceBuilder : MonoBehaviour {
 	private void setUpOnLadder(){
 		IStateService onLadder = new OnLadderService();
 		onLadder.addNext("walking");
+		onLadder.addNext("jumpingWalk");
 		onLadder.addNext("climbing");
 
 		allServices.Add("onLadder",onLadder);
@@ -107,7 +108,8 @@ public class ServiceBuilder : MonoBehaviour {
 
 	private void setUpClimbing(){
 		IStateService climbing = new ClimbingService();
-
+		climbing.addNext("jumpingWalk");
+		climbing.addNext("climbing");
 		
 		allServices.Add("climbing",climbing);
 	}
