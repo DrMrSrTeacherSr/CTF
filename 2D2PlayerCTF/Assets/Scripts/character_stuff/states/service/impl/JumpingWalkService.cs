@@ -13,7 +13,7 @@ public class JumpingWalkService : AbstractStateService {
 	}
 	
 	public override bool checkEnterState(PlayerController controller){
-		if(Input.GetKeyDown(KeyCode.W) && controller.isGrounded()){
+		if(Input.GetKeyDown(KeyCode.W) && controller.isGrounded() && !controller.isOnLadder()){
 			return true;
 		}
 		return false;

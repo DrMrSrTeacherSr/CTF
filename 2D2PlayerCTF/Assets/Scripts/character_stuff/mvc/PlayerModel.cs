@@ -10,6 +10,7 @@ public class PlayerModel : Photon.MonoBehaviour {
 	float xVelocity = 0f;
 	float yVelocity = 0f;
 	bool grounded = true;
+	bool onLadder = false;
 
 	void Start(){
 		//state = new Dictionary<string, bool>();
@@ -46,8 +47,16 @@ public class PlayerModel : Photon.MonoBehaviour {
 		grounded = ground;
 	}
 
+	public void setOnLadder(bool ladder){
+		onLadder = ladder;
+	}
+
 	public bool getGrounded(){
 		return grounded;
+	}
+
+	public bool getOnLadder(){
+		return onLadder;
 	}
 
 	public void setCurrentState(string str){

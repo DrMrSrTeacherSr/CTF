@@ -28,6 +28,7 @@ public class PlayerView : Photon.MonoBehaviour {
 		anim.SetFloat("Speed",Mathf.Abs(model.getXVelocity()));
 
 		anim.SetBool("grounded",model.getGrounded());
+		anim.SetBool("onLadder",model.getOnLadder());
 
 		switch(model.getCurrentState()){
 
@@ -38,7 +39,8 @@ public class PlayerView : Photon.MonoBehaviour {
 		case "crawling" : anim.SetInteger("animation",4);break;
 		case "sneaking" : anim.SetInteger("animation",5);break;
 		case "sliding" : anim.SetInteger("animation",6);break;
-
+		case "onLadder" : anim.SetInteger("animation",7);break;
+		case "climbing" : anim.SetInteger("animation",8);break;
 
 
 

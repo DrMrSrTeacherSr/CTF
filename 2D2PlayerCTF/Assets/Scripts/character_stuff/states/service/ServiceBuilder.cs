@@ -16,6 +16,8 @@ public class ServiceBuilder : MonoBehaviour {
 		setUpCrouching();
 		setUpCrawling();
 		setUpSliding();
+		setUpOnLadder();
+		setUpClimbing();
 
 	}
 
@@ -30,6 +32,7 @@ public class ServiceBuilder : MonoBehaviour {
 		idle.addNext("jumpingWalk");
 		idle.addNext("sneaking");
 		idle.addNext("crouching");
+		idle.addNext("onLadder");
 
 		allServices.Add("idle",idle);
 	}
@@ -41,6 +44,7 @@ public class ServiceBuilder : MonoBehaviour {
 		walking.addNext("jumpingWalk");
 		walking.addNext("sneaking");
 		walking.addNext("crawling");
+		walking.addNext("onLadder");
 			
 		allServices.Add("walking",walking);
 	}
@@ -62,13 +66,15 @@ public class ServiceBuilder : MonoBehaviour {
 
 	private void setUpJumpingDash(){
 		IStateService jumping = new JumpingDashService();
-		
+		jumping.addNext("onLadder");
+
 		allServices.Add("jumpingDash",jumping);
 	}
 
 	private void setUpJumpingWalk(){
 		IStateService jumping = new JumpingWalkService();
-		
+		jumping.addNext("onLadder");
+
 		allServices.Add("jumpingWalk",jumping);
 	}
 	
@@ -89,6 +95,21 @@ public class ServiceBuilder : MonoBehaviour {
 		IStateService sliding = new SlidingService();
 		
 		allServices.Add("sliding",sliding);
+	}
+
+	private void setUpOnLadder(){
+		IStateService onLadder = new OnLadderService();
+		onLadder.addNext("walking");
+		onLadder.addNext("climbing");
+
+		allServices.Add("onLadder",onLadder);
+	}
+
+	private void setUpClimbing(){
+		IStateService climbing = new ClimbingService();
+
+		
+		allServices.Add("climbing",climbing);
 	}
 
 

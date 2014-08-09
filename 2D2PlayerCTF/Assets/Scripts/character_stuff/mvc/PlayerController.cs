@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour {
 	private bool frontWall = false;
 	private bool hangCheck = false;
 	private bool wallHanging = false;
+	private bool onLadder = false;
 	public Transform groundCheck;
 	public LayerMask whatIsGround;
 	private float goundRadius = 0.1f;
@@ -65,6 +66,7 @@ public class PlayerController : MonoBehaviour {
 	{
 		model.setCurrentState(currentState.getName());
 		model.setGrounded(grounded);
+		model.setOnLadder(onLadder);
 		model.setXVelocity(rigidbody2D.velocity.x);
 		model.setYVelocity(rigidbody2D.velocity.y);
 		/*
@@ -99,6 +101,10 @@ public class PlayerController : MonoBehaviour {
 		return grounded;
 	}
 
+	public bool isOnLadder(){
+		return onLadder;
+	}
+
 	public Rigidbody2D getRigidbody(){
 		return rigidbody2D;
 	}
@@ -107,7 +113,22 @@ public class PlayerController : MonoBehaviour {
 	public IPlayerState getCurrentState(){
 		return currentState;
 	}
+
+	public void OnTriggerStay2D (Collider2D col)
+	{
+		
+		if (col.gameObject.tag == "Ladder") {
+			onLadder = true;
+		}
+	}
 	
+	public void OnTriggerExit2D (Collider2D col)
+	{
+		if (col.gameObject.tag == "Ladder") {
+			onLadder = false;
+		}
+	}
+
 
 }
 
