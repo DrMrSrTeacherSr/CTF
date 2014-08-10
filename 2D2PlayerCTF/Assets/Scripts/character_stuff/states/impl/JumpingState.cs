@@ -3,7 +3,7 @@ using System.Collections;
 
 public class JumpingState : AbstractPlayerState{
 
-	private float jumpSpeed = 6f;
+	private float jumpSpeed;
 
 	public JumpingState(float speed){
 		jumpSpeed = speed;

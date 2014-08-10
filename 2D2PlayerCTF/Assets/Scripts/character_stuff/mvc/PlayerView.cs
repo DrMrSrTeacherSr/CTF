@@ -42,6 +42,7 @@ public class PlayerView : Photon.MonoBehaviour {
 		case "sliding" : anim.SetInteger("animation",6);break;
 		case "onLadder" : anim.SetInteger("animation",7);break;
 		case "climbing" : anim.SetInteger("animation",8);break;
+		case "doubleJumping" : anim.SetInteger("animation",9);break;
 
 
 

@@ -18,6 +18,8 @@ public class ServiceBuilder : MonoBehaviour {
 		setUpSliding();
 		setUpOnLadder();
 		setUpClimbing();
+		setUpDoubleJumpingDash();
+		setUpDoubleJumpingWalk();
 
 	}
 
@@ -67,6 +69,7 @@ public class ServiceBuilder : MonoBehaviour {
 	private void setUpJumpingDash(){
 		IStateService jumping = new JumpingDashService();
 		jumping.addNext("onLadder");
+		jumping.addNext("doubleJumpingDash");
 
 		allServices.Add("jumpingDash",jumping);
 	}
@@ -74,6 +77,7 @@ public class ServiceBuilder : MonoBehaviour {
 	private void setUpJumpingWalk(){
 		IStateService jumping = new JumpingWalkService();
 		jumping.addNext("onLadder");
+		jumping.addNext("doubleJumpingWalk");
 
 		allServices.Add("jumpingWalk",jumping);
 	}
@@ -114,5 +118,18 @@ public class ServiceBuilder : MonoBehaviour {
 		allServices.Add("climbing",climbing);
 	}
 
+	private void setUpDoubleJumpingDash(){
+		IStateService doubleJumping = new DoubleJumpingDashService();
+		doubleJumping.addNext("onLadder");
+		
+		allServices.Add("doubleJumpingDash",doubleJumping);
+	}
+	
+	private void setUpDoubleJumpingWalk(){
+		IStateService doubleJumping = new DoubleJumpingWalkService();
+		doubleJumping.addNext("onLadder");
+		
+		allServices.Add("doubleJumpingWalk",doubleJumping);
+	}
 
 }

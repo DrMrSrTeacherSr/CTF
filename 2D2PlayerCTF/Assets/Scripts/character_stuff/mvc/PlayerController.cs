@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour {
 	private bool hangCheck = false;
 	private bool wallHanging = false;
 	private bool onLadder = false;
+	private bool doubleJumped = false;
 	public Transform groundCheck;
 	public LayerMask whatIsGround;
 	private float goundRadius = 0.1f;
@@ -60,6 +61,9 @@ public class PlayerController : MonoBehaviour {
 		//frontWall = Physics2D.OverlapCircle (rightWallCheck.position, shortRadius / 10, whatIsGround) || Physics2D.OverlapPoint (rightWallHangCheck2.position, whatIsGround);
 		//hangCheck = Physics2D.OverlapPoint (rightWallHangCheck2.position, whatIsGround);
 		//wallHanging = !Physics2D.OverlapPoint (rightWallHangCheck.position, whatIsGround) && hangCheck && frontWall && !Input.GetKey (KeyCode.S);
+		if(grounded){
+			doubleJumped = false;
+		}
 	}
 
 	private void updateModel()
@@ -99,6 +103,18 @@ public class PlayerController : MonoBehaviour {
 
 	public bool isGrounded(){
 		return grounded;
+	}
+
+	public bool isDoubleJumpAvailable(){
+		return !doubleJumped;
+	}
+
+	public bool useDoubleJump(){
+		if (!doubleJumped){
+			doubleJumped = true;
+			return true;
+		}
+		return false;
 	}
 
 	public bool isOnLadder(){
