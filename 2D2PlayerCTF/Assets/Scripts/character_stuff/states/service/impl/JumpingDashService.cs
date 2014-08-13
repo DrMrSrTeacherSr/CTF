@@ -14,6 +14,7 @@ public class JumpingDashService : AbstractStateService {
 	
 	public override bool checkEnterState(PlayerController controller){
 		if(Input.GetKeyDown(KeyCode.W) && controller.isGrounded()){
+			controller.getRigidbody().gravityScale = 1f;
 			return true;
 		}
 		return false;

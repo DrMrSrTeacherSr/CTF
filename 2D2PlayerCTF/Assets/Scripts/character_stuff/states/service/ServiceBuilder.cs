@@ -20,6 +20,8 @@ public class ServiceBuilder : MonoBehaviour {
 		setUpClimbing();
 		setUpDoubleJumpingDash();
 		setUpDoubleJumpingWalk();
+		setUpHanging();
+		setUpWallSliding();
 
 	}
 
@@ -70,6 +72,8 @@ public class ServiceBuilder : MonoBehaviour {
 		IStateService jumping = new JumpingDashService();
 		jumping.addNext("onLadder");
 		jumping.addNext("doubleJumpingDash");
+		jumping.addNext("hanging");
+		jumping.addNext("wallSliding");
 
 		allServices.Add("jumpingDash",jumping);
 	}
@@ -78,6 +82,8 @@ public class ServiceBuilder : MonoBehaviour {
 		IStateService jumping = new JumpingWalkService();
 		jumping.addNext("onLadder");
 		jumping.addNext("doubleJumpingWalk");
+		jumping.addNext("hanging");
+		jumping.addNext("wallSliding");
 
 		allServices.Add("jumpingWalk",jumping);
 	}
@@ -121,6 +127,7 @@ public class ServiceBuilder : MonoBehaviour {
 	private void setUpDoubleJumpingDash(){
 		IStateService doubleJumping = new DoubleJumpingDashService();
 		doubleJumping.addNext("onLadder");
+		doubleJumping.addNext("wallSliding");
 		
 		allServices.Add("doubleJumpingDash",doubleJumping);
 	}
@@ -128,8 +135,23 @@ public class ServiceBuilder : MonoBehaviour {
 	private void setUpDoubleJumpingWalk(){
 		IStateService doubleJumping = new DoubleJumpingWalkService();
 		doubleJumping.addNext("onLadder");
+		doubleJumping.addNext("wallSliding");
 		
 		allServices.Add("doubleJumpingWalk",doubleJumping);
+	}
+
+	private void setUpHanging(){
+		IStateService hanging = new HangingService();
+		//hanging.addNext("hanging");
+		
+		allServices.Add("hanging",hanging);
+	}
+
+	private void setUpWallSliding(){
+		IStateService wallSliding = new WallSlidingService();
+		wallSliding.addNext("hanging");
+		
+		allServices.Add("wallSliding",wallSliding);
 	}
 
 }

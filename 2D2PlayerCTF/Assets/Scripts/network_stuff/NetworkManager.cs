@@ -84,10 +84,10 @@ public class NetworkManager : Photon.MonoBehaviour {
         GameObject myPlayer = (GameObject) PhotonNetwork.Instantiate(playerPrefab.name,Vector2.zero * 5, Quaternion.identity,0);
 		((PlayerController) myPlayer.GetComponent<PlayerController>()).enabled = true;
 		//((PlayerModel) myPlayer.GetComponent<PlayerModel>()).enabled = true;
-		Rigidbody2D rigidBody = myPlayer.AddComponent<Rigidbody2D>();
-		rigidBody.gravityScale = 1f;
-		rigidBody.fixedAngle = true;
-		rigidBody.interpolation = RigidbodyInterpolation2D.Interpolate;
+		Rigidbody2D playerRigidBody = myPlayer.AddComponent<Rigidbody2D>();
+		playerRigidBody.gravityScale = 1f;
+		playerRigidBody.fixedAngle = true;
+		playerRigidBody.interpolation = RigidbodyInterpolation2D.Interpolate;
 		//((PlayerNetworker) myPlayer.GetComponent<PlayerNetworker>()).enabled = false;
 		//standByCamera.enabled = false;
     }

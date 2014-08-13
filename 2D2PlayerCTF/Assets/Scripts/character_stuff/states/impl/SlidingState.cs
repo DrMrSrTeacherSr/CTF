@@ -18,10 +18,14 @@ public class SlidingState : AbstractPlayerState {
 	public override void updateState(PlayerController controller){
 		this.controller = controller;
 
+		if(!controller.isFacingRight())
+			slidingSpeed = -12f;
+		else
+			slidingSpeed = 12f;
+
 		Vector2 slidingVector = controller.getRigidbody().velocity;
 		slidingVector.x = slidingSpeed * (1 - stateTimer.getPercentDone());
-		if(controller.getRigidbody().velocity.x < 0)
-			slidingVector.x *= -1;
+
 		controller.getRigidbody().velocity = slidingVector;
 
 		stateTimer.tick ();

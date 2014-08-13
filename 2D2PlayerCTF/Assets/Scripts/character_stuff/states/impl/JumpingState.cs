@@ -15,6 +15,7 @@ public class JumpingState : AbstractPlayerState{
 	
 	public override void updateState(PlayerController controller){
 		this.controller = controller;
+		controller.getRigidbody().gravityScale = 1f;
 		if(Input.GetKey (KeyCode.A))
 			setXVelocity(jumpSpeed * Input.GetAxis("Horizontal"));
 		else if(Input.GetKey (KeyCode.D))
@@ -23,6 +24,4 @@ public class JumpingState : AbstractPlayerState{
 			setYVelocity(15f);
 		}
 	}
-
-
 }

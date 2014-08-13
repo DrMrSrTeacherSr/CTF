@@ -43,25 +43,13 @@ public class PlayerView : Photon.MonoBehaviour {
 		case "onLadder" : anim.SetInteger("animation",7);break;
 		case "climbing" : anim.SetInteger("animation",8);break;
 		case "doubleJumping" : anim.SetInteger("animation",9);break;
+		case "hanging" : anim.SetInteger("animation",10);break;
+		case "wallSliding" : anim.SetInteger("animation",11);break;
 
 
 
 
 		}
-
-
-		/*
-		anim.SetBool ("Ground",model.get("grounded"));
-		anim.SetBool("Crouch",model.get("crouching"));
-		anim.SetBool("Dashing",model.get("dashing"));
-		anim.SetBool("Sneak",model.get("sneaking"));
-		anim.SetBool ("DoubleJump",model.get("doubleJump"));
-		anim.SetBool ("Sliding",model.get("sliding"));
-		anim.SetBool ("WallSlide",model.get("wallSliding"));
-		anim.SetBool ("Climbing",model.get("climbing"));
-		anim.SetBool ("OnLadder",model.get("onLadder"));
-		anim.SetBool ("Hanging",model.get("hanging"));
-		*/
 	}
 
 }

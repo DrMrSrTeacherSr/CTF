@@ -13,7 +13,6 @@ public class DoubleJumpingWalkService : AbstractStateService {
 	}
 	
 	public override bool checkEnterState(PlayerController controller){
-		print(Input.GetKeyDown(KeyCode.W) && !controller.isGrounded() && controller.isDoubleJumpAvailable());
 		if(Input.GetKeyDown(KeyCode.W) && !controller.isGrounded() && controller.isDoubleJumpAvailable()){
 			return true;
 		}

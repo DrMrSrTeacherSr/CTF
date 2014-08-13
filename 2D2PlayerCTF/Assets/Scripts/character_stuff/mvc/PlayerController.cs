@@ -15,11 +15,20 @@ public class PlayerController : MonoBehaviour {
 	private bool grounded = false;
 	private bool backWall = false;
 	private bool frontWall = false;
-	private bool hangCheck = false;
+	private bool hangingCheck = false;
+	private bool isHanging = false;
 	private bool wallHanging = false;
 	private bool onLadder = false;
 	private bool doubleJumped = false;
+	private bool onWall = false;
+	public bool wall1Check;
+	public bool wall2Check;
+	public bool wall3Check;
 	public Transform groundCheck;
+	public Transform wall1;
+	public Transform wall2;
+	public Transform wall3;
+	public Transform hangCheck;
 	public LayerMask whatIsGround;
 	private float goundRadius = 0.1f;
 
@@ -33,21 +42,26 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 		checkForBaseCollisions();
 
+
 		locator.updateLocator(this);
 
 		currentState = locator.getCurrentState();
-		print (currentState.getName());
+
+		//print (currentState.getName());
+		print (getRigidbody().gravityScale);
 
 		currentState.updateState(this);
 
-		if(rigidbody2D.velocity.x < 0 && facingRight){
+		if(rigidbody2D.velocity.x < -.1 && facingRight){
 			model.flip();
 			facingRight = !facingRight;
-		} else if(rigidbody2D.velocity.x > 0 && !facingRight){
+			//print ("flip");
+		} else if(rigidbody2D.velocity.x > .1 && !facingRight){
 			model.flip();
 			facingRight = !facingRight;
-		}
 
+		}
+	
 
 		updateModel();
 
@@ -58,10 +72,26 @@ public class PlayerController : MonoBehaviour {
 		//roof = Physics2D.OverlapCircle (roofCheck.position, shortRadius, whatIsGround);
 		grounded = Physics2D.OverlapCircle (groundCheck.position, goundRadius / 2, whatIsGround);
 		//backWall = Physics2D.OverlapCircle (leftWallCheck.position, shortRadius / 10, whatIsGround);
-		//frontWall = Physics2D.OverlapCircle (rightWallCheck.position, shortRadius / 10, whatIsGround) || Physics2D.OverlapPoint (rightWallHangCheck2.position, whatIsGround);
-		//hangCheck = Physics2D.OverlapPoint (rightWallHangCheck2.position, whatIsGround);
+
+		//Vector2 startPosition = rightWallCheck.position;
+		//Vector2 endPosition = new Vector2(startPosition.x + .1f,startPosition.y - .25f);
+
+
+		//Debug.DrawLine(new Vector3(startPosition.x,startPosition.y,0),new Vector3(endPosition.x,endPosition.y,0));
+
+
+		//frontWall = Physics2D.OverlapArea (startPosition,endPosition, whatIsGround);// || Physics2D.OverlapPoint (rightWallHangCheck2.position, whatIsGround);
+		wall1Check = Physics2D.OverlapPoint (wall1.position, whatIsGround);
+		wall2Check = Physics2D.OverlapPoint (wall2.position, whatIsGround);
+		wall3Check = Physics2D.OverlapPoint (wall3.position, whatIsGround);
+		hangingCheck = Physics2D.OverlapPoint (hangCheck.position, whatIsGround);
+
 		//wallHanging = !Physics2D.OverlapPoint (rightWallHangCheck.position, whatIsGround) && hangCheck && frontWall && !Input.GetKey (KeyCode.S);
-		if(grounded){
+		//print ("wall: " + (wall1Check && wall2Check));
+		//print ("hang: " + hangingCheck);
+		isHanging = (wall1Check && wall2Check && !hangingCheck);
+		onWall = wall1Check || wall2Check || wall3Check;
+		if(grounded || onWall){
 			doubleJumped = false;
 		}
 	}
@@ -71,6 +101,7 @@ public class PlayerController : MonoBehaviour {
 		model.setCurrentState(currentState.getName());
 		model.setGrounded(grounded);
 		model.setOnLadder(onLadder);
+		//model.setHanging(isHanging);
 		model.setXVelocity(rigidbody2D.velocity.x);
 		model.setYVelocity(rigidbody2D.velocity.y);
 		/*
@@ -103,6 +134,18 @@ public class PlayerController : MonoBehaviour {
 
 	public bool isGrounded(){
 		return grounded;
+	}
+
+	public bool isPlayerHanging(){
+		return isHanging;
+	}
+
+	public bool isOnWall(){
+		return onWall;
+	}
+
+	public bool isFacingRight(){
+		return facingRight;
 	}
 
 	public bool isDoubleJumpAvailable(){

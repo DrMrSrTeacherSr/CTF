@@ -26,7 +26,7 @@ public class ServiceLocator : MonoBehaviour {
 
 	
 		foreach(string str in nextStates){
-			print ("Update: " + str);
+			//print ("Update: " + str);
 				if(allServices[str].checkEnterState(controller)){
 					currentService = allServices[str];
 				}
