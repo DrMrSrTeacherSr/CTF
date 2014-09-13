@@ -22,6 +22,7 @@ public class ServiceBuilder : MonoBehaviour {
 		setUpDoubleJumpingWalk();
 		setUpHanging();
 		setUpWallSliding();
+		setUpText();
 
 	}
 
@@ -37,6 +38,7 @@ public class ServiceBuilder : MonoBehaviour {
 		idle.addNext("sneaking");
 		idle.addNext("crouching");
 		idle.addNext("onLadder");
+		idle.addNext("text");
 
 		allServices.Add("idle",idle);
 	}
@@ -152,6 +154,13 @@ public class ServiceBuilder : MonoBehaviour {
 		wallSliding.addNext("hanging");
 		
 		allServices.Add("wallSliding",wallSliding);
+	}
+
+	private void setUpText(){
+		IStateService text = new TextService();
+		text.addNext("text");
+		
+		allServices.Add("text",text);
 	}
 
 }

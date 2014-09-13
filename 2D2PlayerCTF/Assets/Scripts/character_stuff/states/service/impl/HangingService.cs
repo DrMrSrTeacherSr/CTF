@@ -22,6 +22,16 @@ public class HangingService : AbstractStateService {
 	}
 	
 	public override string checkExitState(PlayerController controller){
+		if(Input.GetKey(KeyCode.W)){
+			controller.getRigidbody().gravityScale = 1f;
+			if(controller.isFacingRight()){
+				controller.getRigidbody().velocity = new Vector2(10f,10f);
+			}else{
+				controller.getRigidbody().velocity = new Vector2(-10f,10f);
+			}
+			return "jumpingWalk";
+			
+		}
 		if(Input.GetKey(KeyCode.S)){
 			controller.getRigidbody().gravityScale = 1f;
 			return "jumpingWalk";

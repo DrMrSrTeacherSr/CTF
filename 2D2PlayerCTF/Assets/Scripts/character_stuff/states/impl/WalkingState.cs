@@ -17,6 +17,9 @@ public class WalkingState : AbstractPlayerState {
 
 	public override void updateState(PlayerController controller){
 		this.controller = controller;
+		if(controller.alwaysDash){
+			walkSpeed = 8f;
+		}
 		if(Input.GetKey (KeyCode.A))
 			setXVelocity(-walkSpeed);
 		else

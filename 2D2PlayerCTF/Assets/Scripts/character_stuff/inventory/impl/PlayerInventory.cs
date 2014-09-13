@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AnimationsEnum : MonoBehaviour {
+public class PlayerInventory {
 
 	// Use this for initialization
 	void Start () {

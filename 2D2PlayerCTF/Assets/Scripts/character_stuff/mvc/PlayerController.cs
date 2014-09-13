@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : Photon.MonoBehaviour {
 
 	private ServiceLocator locator;
 	private IPlayerState currentState;
@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour {
 	public bool wall2Check;
 	public bool wall3Check;
 	public Transform groundCheck;
+	public Transform roofCheck;
 	public Transform wall1;
 	public Transform wall2;
 	public Transform wall3;
@@ -32,11 +33,26 @@ public class PlayerController : MonoBehaviour {
 	public LayerMask whatIsGround;
 	private float goundRadius = 0.1f;
 
+	private bool hasMessage = false;
+
+	public BoxCollider2D collider;
+
+	private int currentStateID = 0;
+
+	public bool alwaysDash = true;
+
+	private PlayerControllerGUIManager guiManager;
+
 
 
 	void Start () {
 		model = GetComponent<PlayerModel>();
 		locator = new ServiceLocator();
+		guiManager = new PlayerControllerGUIManager();
+	}
+
+	void OnGUI(){
+		guiManager.updateGUI(this);
 	}
 
 	void Update () {
@@ -48,9 +64,9 @@ public class PlayerController : MonoBehaviour {
 		currentState = locator.getCurrentState();
 
 		//print (currentState.getName());
-		print (getRigidbody().gravityScale);
+//		print (getRigidbody().gravityScale);
 
-		currentState.updateState(this);
+		//currentState.updateState(this);
 
 		if(rigidbody2D.velocity.x < -.1 && facingRight){
 			model.flip();
@@ -61,8 +77,8 @@ public class PlayerController : MonoBehaviour {
 			facingRight = !facingRight;
 
 		}
-	
-
+		currentStateIDUpdate();
+		adjustCollisionBox();
 		updateModel();
 
 	}
@@ -84,6 +100,7 @@ public class PlayerController : MonoBehaviour {
 		wall1Check = Physics2D.OverlapPoint (wall1.position, whatIsGround);
 		wall2Check = Physics2D.OverlapPoint (wall2.position, whatIsGround);
 		wall3Check = Physics2D.OverlapPoint (wall3.position, whatIsGround);
+		roof = Physics2D.OverlapPoint (roofCheck.position, whatIsGround);
 		hangingCheck = Physics2D.OverlapPoint (hangCheck.position, whatIsGround);
 
 		//wallHanging = !Physics2D.OverlapPoint (rightWallHangCheck.position, whatIsGround) && hangCheck && frontWall && !Input.GetKey (KeyCode.S);
@@ -98,7 +115,7 @@ public class PlayerController : MonoBehaviour {
 
 	private void updateModel()
 	{
-		model.setCurrentState(currentState.getName());
+		model.setCurrentState(currentStateID);
 		model.setGrounded(grounded);
 		model.setOnLadder(onLadder);
 		//model.setHanging(isHanging);
@@ -122,6 +139,83 @@ public class PlayerController : MonoBehaviour {
 		model.setXVelocity(rigidbody2D.velocity.x);
 		model.setYVelocity(rigidbody2D.velocity.y);
 		*/
+	}
+
+	private void adjustCollisionBox ()
+	{
+		if(currentState.getName().Equals("crouching")||currentState.getName().Equals("sliding")||currentState.getName().Equals("crawling")){
+			collider.center = new Vector2(collider.center.x,-.17f);
+			collider.size = new Vector2(.43f,.23f);
+//			roofCheck.localPosition = new Vector2(roofCheck.localPosition.x,.14f);
+		}else {
+			collider.center = new Vector2(collider.center.x,.02f);
+			collider.size = new Vector2(.31f,.56f);
+//			roofCheck.localPosition = new Vector2(roofCheck.localPosition.x,.437f);
+		}
+	}
+
+
+	private void currentStateIDUpdate (){
+		switch(currentState.getName()){
+		
+		case "jumping" : currentStateID = -1; break;
+		case "idle" : currentStateID = 0; break;
+		case "walking" : currentStateID = 1; if(alwaysDash) currentStateID = 2; break;
+		case "dashing" : currentStateID = 2;break;
+		case "crouching" : currentStateID = 3;break;
+		case "crawling" : currentStateID = 4;break;
+		case "sneaking" : currentStateID = 5;break;
+		case "sliding" : currentStateID = 6;break;
+		case "onLadder" : currentStateID = 7;break;
+		case "climbing" : currentStateID = 8;break;
+		case "doubleJumping" : currentStateID = 9;break;
+		case "hanging" : currentStateID = 10;break;
+		case "wallSliding" : currentStateID = 11;break;
+		case "text" : currentStateID = 12;break;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void sendMessage(string message){
+	
+		model.setMessage(message);
+	}
+
+	public PhotonView getPhotonView(){
+		return photonView;
+	}
+	
+	public void setHasMessage(bool boolean){
+		hasMessage = boolean;
+	}
+
+	public bool getHasMessage(){
+		return hasMessage;
 	}
 
 	public bool isFrontWall(){

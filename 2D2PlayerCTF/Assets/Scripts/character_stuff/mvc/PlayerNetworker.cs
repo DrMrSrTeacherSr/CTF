@@ -10,6 +10,8 @@ public class PlayerNetworker : Photon.MonoBehaviour {
 	private Vector3 syncStartPosition = Vector3.zero;
 	private Vector3 syncEndPosition = Vector3.zero;
 
+	private bool facingRight = true;
+
 	void Start(){
 		model  = GetComponent<PlayerModel>();
 	}
@@ -38,6 +40,10 @@ public class PlayerNetworker : Photon.MonoBehaviour {
 			stream.SendNext(transform.position);
 			stream.SendNext(model.getXVelocity());
 			stream.SendNext(model.getYVelocity());
+			stream.SendNext(model.getCurrentState());
+			stream.SendNext(model.getGrounded());
+			stream.SendNext(model.getOnLadder());
+			stream.SendNext(model.getMessage());
 			//stream.SendNext(move);
 			//stream.SendNext(grounded);
 			//stream.SendNext(crouching);
@@ -57,7 +63,12 @@ public class PlayerNetworker : Photon.MonoBehaviour {
 			//otherGrounded = (bool)stream.ReceiveNext();
 			//otherCrouch = (bool)stream.ReceiveNext();
 			//otherDash = (bool)stream.ReceiveNext();
-			
+
+			model.setCurrentState((int)stream.ReceiveNext());
+			model.setGrounded((bool)stream.ReceiveNext());
+			model.setOnLadder((bool)stream.ReceiveNext());
+			model.setYVelocity(yVel);
+			model.setMessage((string)stream.ReceiveNext());
 			//otherVSpeed = syncVelocity.y;
 			
 			syncTime = 0f;
@@ -72,6 +83,17 @@ public class PlayerNetworker : Photon.MonoBehaviour {
 			//syncStartPosition = model.getPosition();
 			
 			syncStartPosition = transform.position;
+
+			
+			if(xVel < -.1 && facingRight){
+				model.flip();
+				facingRight = !facingRight;
+				//print ("flip");
+			} else if(xVel > .1 && !facingRight){
+				model.flip();
+				facingRight = !facingRight;
+				
+			}
 			
 		}
 		

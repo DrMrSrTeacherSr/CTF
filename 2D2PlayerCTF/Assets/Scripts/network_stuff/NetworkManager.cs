@@ -19,8 +19,8 @@ public class NetworkManager : Photon.MonoBehaviour {
 	// Use this for initialization
 	void Start (){
 
-		PhotonNetwork.sendRate = 20; 
-		PhotonNetwork.sendRateOnSerialize = 20;
+		PhotonNetwork.sendRate = 60; 
+		PhotonNetwork.sendRateOnSerialize = 60;
         PhotonNetwork.ConnectUsingSettings("preAlpha"); //Version number of the game
 
 	}

@@ -21,6 +21,8 @@ public class ServiceLocator : MonoBehaviour {
 	}
 
 	public void updateLocator(PlayerController controller){
+
+
 		nextStates = currentService.getNextState();
 		string possibleNextState = currentService.checkExitState(controller);
 
@@ -37,7 +39,7 @@ public class ServiceLocator : MonoBehaviour {
 				//nextStates = currentService.getNextState();
 		}
 
-
+		currentService.getState().updateState(controller);
 	}
 
 

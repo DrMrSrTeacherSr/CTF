@@ -24,7 +24,9 @@ public class CrouchingService : AbstractStateService {
 
 
 	public override string checkExitState(PlayerController controller){
-		if(controller.isGrounded() &&  !Input.GetKey(KeyCode.S)){
+
+
+		if(controller.isGrounded() &&  !Input.GetKey(KeyCode.S) && !controller.isRoof()){
 			return "idle";
 		}
 		return null;

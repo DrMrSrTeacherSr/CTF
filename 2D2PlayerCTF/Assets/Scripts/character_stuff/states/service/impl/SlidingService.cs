@@ -26,10 +26,16 @@ public class SlidingService : AbstractStateService {
 
 			if(percent >= .33f && Input.GetKeyUp(KeyCode.S)){
 				if(percent >= .75f){
+					if(controller.isRoof())
+						return "crouching";
 					return "idle";
 				} else if(percent >= .375f){
+					if(controller.isRoof())
+						return "crouching";
 					return "walking";
 				}else if(percent >= .33f){
+					if(controller.isRoof())
+						return "crouching";
 					return "dashing";
 				}
 			}

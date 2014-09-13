@@ -25,8 +25,11 @@ public class CrawlingService : AbstractStateService {
 		if(controller.isGrounded()){
 			if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
 				return "crouching";
-			else if (!Input.GetKey(KeyCode.S))
+			else if (!Input.GetKey(KeyCode.S)){
+				if(controller.isRoof())
+					return "crouching";
 				return "walking";
+			}
 			else
 				return null;
 		}

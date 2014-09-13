@@ -6,17 +6,24 @@ public class PlayerModel : Photon.MonoBehaviour {
 
 
 	//Dictionary<string,bool> state;
-	string currentState;
+	int currentState;
 	float xVelocity = 0f;
 	float yVelocity = 0f;
 	bool grounded = true;
 	bool onLadder = false;
 	bool hanging = false;
 
+	string message;
+	bool newMessage = false;
+	
+
+	private bool facingRight = true;
+
 	void Start(){
 		//state = new Dictionary<string, bool>();
 		//setUpState();
-		currentState = "idle";
+		currentState = 0;
+		message = "";
 	}
 
 	private void setUpState(){
@@ -44,6 +51,20 @@ public class PlayerModel : Photon.MonoBehaviour {
 	}
 	*/
 
+	public string getMessage(){
+		if(newMessage){
+			newMessage = false;
+
+			return message;
+		}
+		return null;
+	}
+
+	public void setMessage(string message){
+		newMessage = true;
+		this.message = message;
+	}
+
 	public void setGrounded(bool ground){
 		grounded = ground;
 	}
@@ -64,11 +85,11 @@ public class PlayerModel : Photon.MonoBehaviour {
 		return onLadder;
 	}
 
-	public void setCurrentState(string str){
-		currentState = str;
+	public void setCurrentState(int id){
+		currentState = id;
 	}
 
-	public string getCurrentState(){
+	public int getCurrentState(){
 		return currentState;
 	}
 

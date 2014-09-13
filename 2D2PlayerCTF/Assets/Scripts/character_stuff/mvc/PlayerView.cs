@@ -5,21 +5,21 @@ public class PlayerView : Photon.MonoBehaviour {
 
 	PlayerModel model;
 	Animator anim;
+	ViewGUI gui;
 
 	void Start(){
 		model  = GetComponent<PlayerModel>();
 		anim = GetComponent<Animator>();
+		gui = new ViewGUI(photonView, model);
 	}
 
 	void Update(){
 		updateAnimations();
+	
 	}
 
 	void OnGUI(){
-
-
-
-
+			gui.updateGUI();
 	}
 	
 	void updateAnimations(){
@@ -30,26 +30,12 @@ public class PlayerView : Photon.MonoBehaviour {
 		anim.SetBool("grounded",model.getGrounded());
 		anim.SetBool("onLadder",model.getOnLadder());
 
-		switch(model.getCurrentState()){
-		
-		case "jumping" : anim.SetInteger("animation",-1); break;
-		case "idle" : anim.SetInteger("animation",0); break;
-		case "walking" : anim.SetInteger("animation",1);break;
-		case "dashing" : anim.SetInteger("animation",2);break;
-		case "crouching" : anim.SetInteger("animation",3);break;
-		case "crawling" : anim.SetInteger("animation",4);break;
-		case "sneaking" : anim.SetInteger("animation",5);break;
-		case "sliding" : anim.SetInteger("animation",6);break;
-		case "onLadder" : anim.SetInteger("animation",7);break;
-		case "climbing" : anim.SetInteger("animation",8);break;
-		case "doubleJumping" : anim.SetInteger("animation",9);break;
-		case "hanging" : anim.SetInteger("animation",10);break;
-		case "wallSliding" : anim.SetInteger("animation",11);break;
+		anim.SetInteger("animation",model.getCurrentState());
 
-
-
-
-		}
 	}
+	
+
+
+
 
 }
